@@ -25,7 +25,12 @@ conn.connect((err) => {
 });
 
 app.get('/', function (req, res) {
-    res.render('index');
+    if (req.session.loggedin && req.session.role == 'teacher') {
+        res.render('index', { name: req.session.name });
+    }
+    else {
+        res.render('index', { name: '' });
+    }
 });
 
 app.get('/login', function (req, res) {
@@ -233,22 +238,12 @@ app.post('/question_list', function (req, res) {
 
 app.get('/student_rating', function (req, res) {
     if (req.session.loggedin && req.session.role == 'teacher') {
-        conn.query('call get_the_best_n_students_in_grup(?)', [10], function (err, results, fields) {
+        conn.query('SELECT * from student ', function (err, results, fields) {
+            results.sort(function (a, b) {
+                return b.raiting - a.raiting;
+            });
             if (err) throw err;
-            res.render('student_rating', { students: results[0] });
-        });
-    } else {
-        res.redirect('/login');
-    }
-});
-
-
-app.post('/student_rating', function (req, res) {
-    var number_of_students = req.body.number_of_students;
-    if (req.session.loggedin && req.session.role == 'teacher') {
-        conn.query('call get_the_best_n_students_in_grup(?)', [number_of_students], function (err, results, fields) {
-            if (err) throw err;
-            res.render('student_rating', { students: results[0] });
+            res.render('student_rating', { students: results });
         });
     } else {
         res.redirect('/login');

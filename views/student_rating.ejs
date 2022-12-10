@@ -18,7 +18,7 @@
                     <thead>
                         <tr>
                             <th scope="col">Worker Name</th>
-                            <th scope="col">Saved CO2</th>
+                            <th scope="col">Saved CO2 (in grams)</th>
                             <th scope="col">Reward (TOP 3)</th>
                         </tr>
                     </thead>
@@ -29,7 +29,7 @@
                                     <%= students[i].name %>
                                 </td>
                                 <td>
-                                    <%= students[i].rating %>
+                                    <%= students[i].raiting %>
                                 <td id="<%=i%>">
                                     <% if (i < 3) { %>
                                         <button class="btn btn-primary" onclick="reward(<%=i%>)">Reward</button>
@@ -62,19 +62,23 @@
                 // replace button with select
                 btn.innerHTML = "";
                 btn.appendChild(select);
+                // add space
+                var space = document.createElement("span");
+                space.innerHTML = " ";
+                btn.appendChild(space);
                 // add submit button
                 var submit = document.createElement("button");
                 submit.setAttribute("class", "btn btn-primary");
-                // onclick submit xpath of button
-                submit.setAttribute("onclick", "rewarded(" + (i + 1) + ")");
+                submit.setAttribute("id", i  + "submit");
+                submit.setAttribute("onclick", "rewarded(" + (i) + ")");
                 submit.innerHTML = "Submit";
                 btn.appendChild(submit);
 
             }
-            function rewarded(xpath) {
+            function rewarded(id) {
                 var reward = document.getElementById("reward").value;
-                var btn = document.evaluate('//button[' + xpath + ']', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-                btn.innerHTML = reward;
+                var btn = document.getElementById(id + "submit");
+                btn.innerHTML = "Rewarded!";
                 btn.setAttribute("class", "btn btn-success");
                 btn.setAttribute("disabled", "true");
             }
